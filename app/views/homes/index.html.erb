@@ -1,5 +1,8 @@
 <p style="color: green"><%= notice %></p>
 <div class="container">
+  <%= render "layouts/search" %>
+</div>
+<div class="container">
   <%= render "layouts/header" %>
   <div>
     <table class="table">
@@ -26,11 +29,27 @@
             <td><%= bus.registration_no %></td>
             <td><%= bus.fare %></td>
             <td>
-              <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#myModal">Book Your Seat</button>
+              <!-- <button type="button" id="busModal" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#myModal" data-bus-id="<%#= bus&.id %>" data-user-id="<%#= current_user&.id %>" onclick="bookSeat()">Book Your Seat</button> -->
+              <a href="#" data-toggle="modal" id="productModal" data-target="#product-modal" data-bus-id="<%= bus&.id %>" onclick="bookSeat2()">
+                View Product
+              </a>
+            </td>
           </tr>
         <% end %>
       </tbody>
     </table>
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="product-modal" tabindex="-1" role="dialog" aria-labelledby="product-modal-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!-- Content will be inserted here -->
+    </div>
+  </div>
 </div>
 
 <div class="modal" id="myModal">
@@ -45,13 +64,14 @@
 
       <!-- Modal body -->
       <div class="modal-body">
-        <% @buses&.each_with_index do |bus, i| %>
-          <%= form_tag(reservations_path(current_user), method: :post) do |f|%>
-                <%= hidden_field_tag :bus_id, bus.id %>
-                <%= f.date_field :reservation_date%>
-                <%= submit_tag "Reserve" %>
-              <% end %>
-          <%end%>
+        <%# @buses&.each_with_index do |bus, i| %>
+          <%#= form_tag(reservations_path(current_user), method: :post) do |f|%>
+            <%#= bus.no_of_seats %>
+            <%#= hidden_field_tag :bus_id, bus.id %>
+            <%##= submit_tag "Reserve" %>
+            <!-- <button type="button" id="busModal" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#myModal" data-bus-id="<%#= bus.id %>" data-user-id="<%#= current_user.id %>" onclick="bookSeat()">Book Your Seat</button> -->
+          <%# end %>
+        <%#end%>
       </div>
 
       <!-- Modal footer -->
@@ -62,3 +82,45 @@
     </div>
   </div>
 </div>
+
+<script>
+  
+  function bookSeat() {
+  var userId = $("#busModal").data("user-id");
+  var busId = $("#busModal").data("bus-id");
+
+  $.ajax({
+    url: "/reservations",
+    method: "POST",
+    data: { reservation: { bus_id: busId, user_id: userId } },
+    headers: {
+      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+    },
+    success: function () {
+      location.reload;
+      // handle successful reservation
+    },
+    error: function () {
+      // handle failed reservation
+    }
+  });
+}
+
+
+// Handle the click event on the link
+function bookSeat2() {
+    // Get the product ID from the link
+    var productId = $('#productModal').data('bus-id');
+    // Send an AJAX request to fetch the show page
+    $.ajax({
+      url: '/buses/' + productId,
+      method: 'GET',
+      success: function(response) {
+        // Insert the response into the modal
+        $('#product-modal .modal-content').html(response);
+        $("#product-modal").modal("show");
+      }
+    });
+  // });
+}
+</script>

@@ -1,0 +1,18 @@
+<div class="container">
+  <%= render "layouts/header" %>
+  <div class="row d-flex align-items-center justify-content-center">
+    <div class="col-md-12">
+      <div class="card p-4"><h2>Editing bus</h2>
+
+        <%= render "form", bus: @bus %>
+
+        <br>
+
+        <div>
+          <%= link_to "Show this bus", @bus %> |
+          <%= link_to "Back to buses", buses_path %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

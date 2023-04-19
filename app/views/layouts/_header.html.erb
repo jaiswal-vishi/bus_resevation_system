@@ -12,6 +12,20 @@
 						</li>
 					</ul>
 					<ul class="navbar-nav ">
+						<%if current_user.bus_owner? && @show_link%>
+    					<%= link_to "List Of your Buses", buses_path, :class => "btn btn-light"%>
+    					<li class="nav-item", style="margin-left: 10px;">
+								<%= link_to "Add Bus", new_bus_path, :class => "btn btn-primary"%>
+							</li>
+						<%end%>
+						<%if current_user.bus_owner? && @home_show_link%>
+							<li class="nav-item", style="margin-left: 10px;">
+								<%= link_to "Add Bus", new_bus_path, :class => "btn btn-primary"%>
+							</li>
+							<li class="nav-item" style="margin-left: 10px;">
+								<%= link_to "Home", root_path, method: :delete, :class => "btn btn-primary" %>
+							</li>
+						<%end%>
 						<li class="nav-item" style="margin-left: 10px;">
 							<%#= link_to "Sign_out", destroy_user_session_path, method: :delete, :class => "btn btn-danger"%>
 							<%= link_to "Logout", logout_path, method: :delete, :class => "btn btn-danger" %>

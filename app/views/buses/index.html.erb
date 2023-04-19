@@ -1,0 +1,36 @@
+<p style="color: green"><%= notice %></p>
+
+<div class="container">
+  <%= render "layouts/header" %>
+  <div>
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Sr No.</th>
+          <th scope="col">Bus Name</th>
+          <th scope="col">Source Route</th>
+          <th scope="col">Destination Route</th>
+          <th scope="col">No Of Seats</th>
+          <th scope="col">Registration No</th>
+          <%if current_user&.role == "bus_owner"%><th scope="col">Status</th><% end %>
+          <th scope="col">Fare</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @buses&.each_with_index do |bus, i| %>
+          <tr>
+            <th scope="row"><%= i+1 %></th>
+            <td><%= bus.name %></td>
+            <td><%= bus.source_route %></td>
+            <td><%= bus.destination_route %></td>
+            <td><%= bus.no_of_seats %></td>
+            <td><%= bus.registration_no %></td>
+            <td scope="col"><span style="color: <%= bus.status == 'pending' ? 'yellow' : bus.status == 'rejected' ? 'red' : 'green' %>;"><%= bus.status %></span></td>
+            <td><%= bus.fare %></td>
+            <td colspan="2" class="btn-group"><%= link_to "Edit", edit_bus_path(bus.id), class: "btn btn-secondary" %>  <%= button_to "Delete", bus_path(bus.id), method: :delete, class: "btn btn-danger" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+</div>

@@ -1,0 +1,20 @@
+<%= form_tag root_path, class: "row", method: :get do |f| %>
+  <div class="col-md-3">
+    <%= text_field_tag :name, session[:name], class: "form-control", placeholder: "Search bus name.." %>
+  </div>
+  <div class="col-md-3">
+    <%#= label_tag :source_route, "Source" %>
+    <%#= text_field_tag :source_route, session[:source_route] %>
+    <%= select_tag :source_route, options_for_select(Bus::SOURCE, session[:source_route]), {prompt: "Select a source", class: "form-select", placeholder: "Choose a source"} %>
+    </div>
+  <div class="col-md-3">
+    <%#= label_tag :destination_route, "Destination" %>
+    <%#= text_field_tag :destination_route, session[:destination_route] %>
+    <%= select_tag :destination_route, options_for_select(Bus::DESTINATION, session[:destination_route]), {prompt: "Select a destination", class: "form-select", placeholder: "Choose a destination"} %>
+  </div>
+  <div class="col-md-3">
+    <%= submit_tag "Search", :class => "btn btn-light" %>
+    <%= link_to "Clear", root_path, :class => "btn btn-danger"%>
+  </div>
+<% end %>
+<br>
