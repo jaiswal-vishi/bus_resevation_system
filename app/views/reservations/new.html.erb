@@ -1,0 +1,12 @@
+<h1>New Reservation</h1>
+
+<%= form_tag reservations_path do %>
+  <% @seats.each do |seat| %>
+    <div>
+      <%= check_box_tag "seat_ids[]", seat.id %>
+      <%= label_tag "seat_#{seat.id}", "Seat #{seat.number}" %>
+    </div>
+  <% end %>
+
+  <%= submit_tag "Reserve Seats" %>
+<% end %>

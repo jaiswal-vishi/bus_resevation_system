@@ -1,0 +1,71 @@
+<%= form_with(model: bus) do |form| %>
+  <% if bus&.errors&.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(bus.errors.count, "error") %> prohibited this bus from being saved:</h2>
+
+      <ul>
+        <% bus&.errors&.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :Bus_Name, style: "display: block" %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :source_route, style: "display: block" %>
+    <%= form.select :source_route, options_for_select(Bus::SOURCE), {}, {class: "form-control"} %>
+  </div>
+
+  <div>
+    <%= form.label :destination_route, style: "display: block" %>
+    <%= form.select :destination_route, options_for_select(Bus::DESTINATION), {}, {class: "form-control"} %>
+  </div>
+
+  <div>
+    <%= form.label :registration_no, style: "display: block" %>
+    <%= form.text_field :registration_no %>
+  </div>
+
+  <div>
+    <%= form.label :no_of_seats_in_bus, style: "display: block" %>
+    <%= form.number_field :no_of_seats %>
+  </div>
+
+  <div>
+    <%= form.label :fare, style: "display: block" %>
+    <%= form.text_field :fare %>
+  </div>
+
+  <div>
+    <%= form.label :status, style: "display: block" %>
+    <%= form.text_field :status %>
+  </div>
+
+  <!-- if bus_owner want to mention available seats -->
+  <div>
+    <%#= form.label :available_seats, style: "display: block" %>
+    <%#= form.text_field :available_seats %>
+    
+
+  </div>
+
+  <!-- if bus_owner want to mention booked_seats for themself first-->
+  <div>
+    <%= form.label :booked_seats, style: "display: block" %>
+    <%= form.text_field :booked_seats %>
+  </div>
+
+  <div>
+    <%= form.hidden_field :user_id %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+
