@@ -1,0 +1,64 @@
+<p style="color: green"><%= notice %></p>
+<div class="container">
+  <%= render "layouts/header" %>
+  <div>
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Sr No.</th>
+          <th scope="col">Bus Name</th>
+          <th scope="col">Source Route</th>
+          <th scope="col">Destination Route</th>
+          <th scope="col">No Of Seats</th>
+          <th scope="col">Registration No</th>
+          <th scope="col">Fare</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @buses&.each_with_index do |bus, i| %>
+          <tr>
+            <th scope="row"><%= i+1 %></th>
+            <td><%= bus.name %></td>
+            <td><%= bus.source_route %></td>
+            <td><%= bus.destination_route %></td>
+            <td><%= bus.no_of_seats %></td>
+            <td><%= bus.registration_no %></td>
+            <td><%= bus.fare %></td>
+            <td>
+              <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#myModal">Book Your Seat</button>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+</div>
+
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Book Your seat here...</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <% @buses&.each_with_index do |bus, i| %>
+          <%= form_tag(reservations_path(current_user), method: :post) do |f|%>
+                <%= hidden_field_tag :bus_id, bus.id %>
+                <%= f.date_field :reservation_date%>
+                <%= submit_tag "Reserve" %>
+              <% end %>
+          <%end%>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
