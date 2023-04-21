@@ -7,6 +7,10 @@ class HomesController < ApplicationController
     session[:source_route] = params[:source_route]
     session[:destination_route] = params[:destination_route]
 
-    @buses = @buses.search(params[:source_route], params[:destination_route], params[:name])if params[:source_route].present? && params[:destination_route].present? || params[:name].present?
+    if @buses.present?
+      @buses = @buses.search(params[:source_route], params[:destination_route], params[:name])if params[:source_route].present? && params[:destination_route].present? || params[:name].present?
+    elsif params[:source_route].present? && params[:destination_route].present? || params[:name].present?
+      flash[:alert] = "Bus are not available in this route or this name"
+    end
   end
 end

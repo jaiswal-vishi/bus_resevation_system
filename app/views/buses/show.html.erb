@@ -1,27 +1,73 @@
-<!-- <p style="color: green"><%#= notice %></p> -->
-
-<div class="container pt-4 pb-4">
-  <div class="d-flex align-items-center justify-content-between">
-    <h4>Book Your seat here...</h4>
-    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-  </div>
-  <hr>
-  <div class="row">
-    <!-- ab = <%# @bus.&no_of_seats%> -->
-    <%1.upto(20) do |a| %>
-      <div class="col-md-3">
-        <div class="text-center">
-          <i class="fas fa-couch"></i>
-          <i class="fas fa-couch" style="color: red <%#= couch_selected ? 'red' : 'inherit' %>"></i>
-          <p style="font-size: 10px;color: gray;"><%= a %></p>
+<% if user_signed_in? %>
+  <div class="container pt-4 pb-4 bg-white" style="border-radius: 5px;">
+    <div class="d-flex align-items-center justify-content-between">
+      <h4>Book Your seat here...</h4>
+      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+    <hr>
+    <div class="row">
+      <% seats = @available_seats + @booked_seats %>
+      <% seats.sort.each do |seat| %>
+        <div class="col-md-3">
+          <div class="text-center">
+            <% selected = @booked_seats.include?(seat) %>
+            <label class="seat-label" style="color: <%= selected ? 'red' : 'inherit' %>">
+              <input type="checkbox" name="selected_seats[]" value="<%= seat %>" class="seat-checkbox"  <%= selected ? 'disabled' : '' %>>
+              <i class="fas fa-couch"></i><div class="font-text text-black-50" style="font-size: 10px;">seat no. <%= seat%></div>
+            </label>
+          </div>
         </div>
+      <% end %>
+      <div class="form-group">
+        <label for="my-date">Booking Date:</label>
+        <input type="date" id="my-date" name="my_date" min="<%= Date.today.to_s %>" max="<%= (Date.today).to_s %>">
       </div>
-    <% end %>
+    </div>
+    <hr>
+    <div class="d-flex align-items-center justify-content-between">
+      <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      <button type="button" id="busModal" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#myModal" data-bus-id="<%= @bus&.id %>" data-user-id="<%= current_user&.id %>" onclick="reservation()">Book Your Seat</button>
+    </div>
   </div>
-  <hr>
-  <div class="d-flex align-items-center justify-content-between">
-    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-    <button type="button" id="busModal" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#myModal" data-bus-id="<%= @bus&.id %>" data-user-id="<%= current_user&.id %>" onclick="bookSeat()">Book Your Seat</button>
+<% end %>
 
-  </div>
-</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    // Disable past dates in reservation date picker
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById("reservation_date").setAttribute("min", today);
+    document.getElementById("reservation_date").setAttribute("max", today);
+  });
+  function reservation() {
+
+    var selectedSeats = [];
+    const selectedDate = $('input[type=date]').val();
+
+    $('input[type=checkbox]').each(function() {
+      if (this.checked) {
+
+        selectedSeats.push(this.value);
+      }
+    });
+
+
+    var busId = $('#busModal').data('bus-id');
+    var userId = $('#busModal').data('user-id');
+
+    $.ajax({
+      url: '/reservations',
+      type: 'POST',
+      data: { reservation: { bus_id: busId, user_id: userId, booked_seats: selectedSeats, reservation_date: selectedDate } },
+      headers: {
+        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function(response) {
+        // Handle successful response from server
+      },
+      error: function(xhr) {
+        // Handle error response from server
+      }
+    });
+  }
+</script>

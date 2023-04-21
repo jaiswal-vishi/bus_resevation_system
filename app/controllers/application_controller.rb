@@ -10,6 +10,19 @@ class ApplicationController < ActionController::Base
     end
   end
 
+
+  def authenticate_user!
+    unless user_signed_in?
+      flash[:alert] = "You need to sign in or sign up before continuing."
+    end
+  end
+  
+  def authenticate_bus_owner!
+    unless current_user && current_user.bus_owner?
+      redirect_to root_path, alert: "You don't have permission to access this page"
+    end
+  end
+
   protected
 
   def configure_permitted_parameters

@@ -1,0 +1,34 @@
+<div class="container">
+  <%= render "layouts/header" %>
+  <div class="row d-flex align-items-center justify-content-center">
+    <div class="col-md-12">
+      <div class="card shadow p-5">
+        <h2 class="text-center">Your Reservation Details</h2>
+					<p><strong>Todal Bookings you have done: </strong><%= @reservations&.all&.count %></p>
+				</div>
+			</div>
+		</div>
+	<div class="row d-flex align-items-center justify-content-center">
+		<div class="col-md-12">
+			<% @reservations.each do |reservation|%>
+      	<div class="card shadow p-5">
+					<p><strong>Customer Name: </strong><%= reservation.user.email.gsub(/@gmail\.com/, "")%></p>
+				  <span class="<%= reservation&.reservation_date < Date.today ? 'text-bg-success text-white' : 'text-bg-warning text-white' %> btn disabled">
+					  <%= reservation&.reservation_date < Date.today ? 'Completed' : 'Upcoming trip' %>
+					</span>
+				  <p><strong>Bus: </strong><%=reservation.bus.id%></p>
+				  <p><strong>Bus No. </strong><%= reservation&.bus&.registration_no %></p>
+				  <% seat_numbers = reservation&.booked_seats.join(", ")%>
+				  <p><strong>Seat No:</strong><%= seat_numbers%></p>
+				  <p><strong>Reservation Date: </strong> <%= reservation&.reservation_date&.strftime("%B %d, %Y") %></p>
+				  <p><strong>Source Route: </strong> <%= reservation&.bus&.source_route %></p>
+				  <p><strong>Destination Route: </strong><%= reservation&.bus&.destination_route %></p>
+				  <p>want to cancel reservation </p>
+				  <!-- <span class="<%#= reservation&.reservation_date < Date.today ? 'disabled' : '' %>"><%#= button_to  "Cancel Reservation", reservation_path(reservation), method: :delete, data: { confirm: "Are you sure you want to cancel this reservation?"},class: (reservation&.reservation_date < Date.today ? "disabled" : "") %></span> -->
+					<%= button_to "Cancel Reservation", reservation_path(reservation), method: :delete, data: { confirm: "Are you sure you want to cancel this reservation?" }, class: (reservation&.reservation_date < Date.today ? "disabled" : ""), disabled: (reservation&.reservation_date < Date.today) %>
+				</div>
+
+				<% end %>
+		</div>
+	</div>
+</div>

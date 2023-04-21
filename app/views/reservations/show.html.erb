@@ -1,4 +1,20 @@
 <p style="color: green"><%= notice %></p>
 <div class="container">
-  <h2>All the info of your reserved seat!</h2>
+  <%= render "layouts/header" %>
+  <div class="row d-flex align-items-center justify-content-center">
+    <div class="col-md-12">
+      <div class="card shadow p-5">
+        <h2>Your Reservation Details</h2>
+        <p><strong>Todal Bookings you have done:</strong><%= @reservation&.registration_no %></p>
+
+        <p><strong>Customer Name:</strong> <%= @user_name%></p>
+        <p><strong>Bus No.</strong><%= @reservation&.registration_no %></p>
+        <p><strong>Reservation Date:</strong> <%#= @reservation&.reservation_date %></p>
+        <p><strong>Source Route:</strong> <%= @bus&.source_route %></p>
+        <p><strong>Destination Route:</strong><%= @bus&.destination_route %></p>
+        <p>want to cancel reservation</p>
+        <%= link_to "Cancel Reservation", reservation_path(@reservation), method: :delete, data: { confirm: "Are you sure you want to cancel this reservation?" } %>
+      </div>
+    </div>
+  </div>
 </div>

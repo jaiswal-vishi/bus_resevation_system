@@ -1,31 +1,16 @@
 class ReservationsController < ApplicationController
+  before_action :authenticate_bus_owner!, only: [:index, :new, :destroy]
   before_action :authenticate_user!
 
   def new
-    @bus = Bus.find(params[:bus_id])
   end
-
-  # def create
-  # 	debugger
-  #   @user = current_user
-  #   @bus = Bus.find(params[:bus_id])
-  #   @reservation = @user.reservations.create!(bus: @bus, reservation_date: Date.today)
-  #   redirect_to reservation_path(@reservation)
-  # end
-
-  # def destroy
-  #   reservation = current_user.reservations.find(params[:id])
-  #   reservation.destroy
-
-  #   flash[:notice] = "Reservation cancelled successfully."
-  #   redirect_to reservations_path
-  # end
-
   
+  def index
+    @reservations = Reservation.includes(:bus, :user).all
+  end
 
   def create
     @reservation = Reservation.new(reservation_params)
-
     if @reservation.save
       respond_to do |format|
         format.html # renders index.html.erb
@@ -36,9 +21,31 @@ class ReservationsController < ApplicationController
     end
   end
 
+  def show
+    @reservation = Reservation.find(params[:id])
+  end
+
+  def user_reservations
+    reservations = Reservation.where(user_id: params[:id])
+    @reservations = reservations.includes(:bus, :user).all
+    render 'user_reservations'
+  end
+
+  def destroy
+    @reservation = Reservation.find(params[:id])
+    @reservation.destroy
+    redirect_to reservations_path, notice: "Reservation cancelled successfully."
+  end
+
+  def cancel_reservation
+    @reservation = Reservation.find(params[:reservation_id])
+    @reservation.destroy
+    redirect_to "/#{params[:id]}/reservations", notice: "Reservation cancelled successfully."
+  end
+
   private
 
   def reservation_params
-    params.require(:reservation).permit(:user_id, :bus_id)
+    params.require(:reservation).permit(:user_id, :bus_id, :reservation_date, :available_seats => [], :booked_seats => [])
   end
 end
