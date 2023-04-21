@@ -14,15 +14,15 @@ Rails.application.routes.draw do
     end
   end
 
-  authenticate :user do
-    resources :reservations
-  end
-  # resources :bus_owners do
-  #   resources :buses
-  # end
+  resources :reservations
 
+  get '/:id/reservations', to: 'reservations#user_reservations', as: 'user_reservations'
+  delete '/:id/reservations/:reservation_id', to: 'reservations#cancel_reservation', as: 'destroy_reservation'
 
   get '/logout', to: 'sessions#destroy', as: :logout
+
+  post '/update_bus_show', to: 'buses#update_show', as: 'update_show'
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")

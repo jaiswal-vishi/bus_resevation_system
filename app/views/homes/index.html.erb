@@ -1,9 +1,10 @@
-<p style="color: green"><%= notice %></p>
-<div class="container">
+<div class="container mt-5">
+  <%= render "layouts/header" %>
+</div>
+<div class="container search-section">
   <%= render "layouts/search" %>
 </div>
 <div class="container">
-  <%= render "layouts/header" %>
   <div>
     <table class="table">
       <thead class="thead-dark">
@@ -29,10 +30,7 @@
             <td><%= bus.registration_no %></td>
             <td><%= bus.fare %></td>
             <td>
-              <!-- <button type="button" id="busModal" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#myModal" data-bus-id="<%#= bus&.id %>" data-user-id="<%#= current_user&.id %>" onclick="bookSeat()">Book Your Seat</button> -->
-              <a href="#" data-toggle="modal" id="productModal" data-target="#product-modal" data-bus-id="<%= bus&.id %>" onclick="bookSeat2()">
-                View Product
-              </a>
+              <button type="button" id="productModal<%= i %>" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#product-modal" data-bus-id="<%= bus&.id %>" onclick="bookSeat(<%= i %>)">Book Your Seat</button>
             </td>
           </tr>
         <% end %>
@@ -40,77 +38,39 @@
     </table>
 </div>
 
-
-
-
 <!-- Modal -->
 <div class="modal fade" id="product-modal" tabindex="-1" role="dialog" aria-labelledby="product-modal-label" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <!-- Content will be inserted here -->
+      <!-- content of show.html.erb from buses -->
     </div>
   </div>
 </div>
 
 <div class="modal" id="myModal">
   <div class="modal-dialog">
-    <div class="modal-content">
-
-      <!-- Modal Header -->
+     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Book Your seat here...</h4>
+        <h4 class="modal-title">
+          Thanks for Reservation!
+        </h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-
-      <!-- Modal body -->
       <div class="modal-body">
-        <%# @buses&.each_with_index do |bus, i| %>
-          <%#= form_tag(reservations_path(current_user), method: :post) do |f|%>
-            <%#= bus.no_of_seats %>
-            <%#= hidden_field_tag :bus_id, bus.id %>
-            <%##= submit_tag "Reserve" %>
-            <!-- <button type="button" id="busModal" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#myModal" data-bus-id="<%#= bus.id %>" data-user-id="<%#= current_user.id %>" onclick="bookSeat()">Book Your Seat</button> -->
-          <%# end %>
-        <%#end%>
-      </div>
+        <p>We will look over your message and get back to you by tomorrow. In the meantime, you can check the FAQ section, look over our new product collection or browse through our latest blog posts [link to another page — will be displayed as Please click here to continue].
 
-      <!-- Modal footer -->
+        Your can see your info on My booking section</p>
+      </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
       </div>
 
-    </div>
-  </div>
-</div>
 
 <script>
-  
-  function bookSeat() {
-  var userId = $("#busModal").data("user-id");
-  var busId = $("#busModal").data("bus-id");
-
-  $.ajax({
-    url: "/reservations",
-    method: "POST",
-    data: { reservation: { bus_id: busId, user_id: userId } },
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    },
-    success: function () {
-      location.reload;
-      // handle successful reservation
-    },
-    error: function () {
-      // handle failed reservation
-    }
-  });
-}
-
-
 // Handle the click event on the link
-function bookSeat2() {
+function bookSeat(index) {
     // Get the product ID from the link
-    var productId = $('#productModal').data('bus-id');
+    var productId = $('#productModal'+ index).data('bus-id');
     // Send an AJAX request to fetch the show page
     $.ajax({
       url: '/buses/' + productId,
@@ -124,3 +84,5 @@ function bookSeat2() {
   // });
 }
 </script>
+
+

@@ -1,27 +1,97 @@
-<!-- <p style="color: green"><%#= notice %></p> -->
-
-<div class="container pt-4 pb-4">
-  <div class="d-flex align-items-center justify-content-between">
-    <h4>Book Your seat here...</h4>
-    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-  </div>
-  <hr>
-  <div class="row">
-    <!-- ab = <%# @bus.&no_of_seats%> -->
-    <%1.upto(20) do |a| %>
-      <div class="col-md-3">
-        <div class="text-center">
-          <i class="fas fa-couch"></i>
-          <i class="fas fa-couch" style="color: red <%#= couch_selected ? 'red' : 'inherit' %>"></i>
-          <p style="font-size: 10px;color: gray;"><%= a %></p>
-        </div>
+<div class="modal-body">
+  <% if user_signed_in? %>
+    <div class="containe">
+      <div class="d-flex align-items-center justify-content-between">
+        <h4>Book Seats Here</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-    <% end %>
-  </div>
-  <hr>
-  <div class="d-flex align-items-center justify-content-between">
-    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-    <button type="button" id="busModal" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#myModal" data-bus-id="<%= @bus&.id %>" data-user-id="<%= current_user&.id %>" onclick="bookSeat()">Book Your Seat</button>
+      <%= form_with url: "/update_bus_show", method: :post, remote: true, id: "update-bus-form" do |form| %>
+          <%= hidden_field_tag :id, @bus.id %>
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+        <label for="my-date">Booking Date:</label>
+        <input type="date" id="my-date" name="reservation_date" min="<%= Date.today.to_s %>">
+        <%#= submit_tag "Show Available Seats", class: 'btn btn-primary', id: 'filter-button' %>
+        <!-- <button type="submit" id="busModal" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#myModal" data-bus-id="<%#= @bus&.id %>" data-user-id="<%#= current_user&.id %>">Show Available Seats</button> -->
+        <button type="button" id="updateBusModalBtn" class="btn btn-secondary" data-bs-target="#update-bus-modal" onclick="updateBusModal(<%= @bus.id %>)">Book seat</button>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+</div>
 
+
+<div class="modal fade" id="update-bus-modal" tabindex="-1" aria-labelledby="update-bus-modal-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- The content of the modal will be inserted here dynamically that is update_show.html.erb of bus-->
+    </div>
   </div>
 </div>
+
+
+<style type="text/css">
+  .seat-label[data-booked="true"] {
+    color: red;
+  }
+</style>
+
+<script type="text/javascript">
+  function updateBusModal(busId) {
+    const selectedDate = $('input[type=date]').val();
+    $.ajax({
+      url: '/update_bus_show',
+      method: 'POST',
+      data: { id: busId, reservation_date: selectedDate },
+      headers: {
+          'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+        },
+      success: function(response) {
+        // Insert the response into the modal
+        $('#update-bus-modal .modal-content').html(response);
+        $("#update-bus-modal").modal("show");
+      }
+    });
+  }
+
+  $(document).ready(function() {
+    // Disable past dates in reservation date picker
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById("reservation_date").setAttribute("min", today);
+  });
+
+
+  function reservation() {
+    var selectedSeats = [];
+    const selectedDate = $('input[type=date]').val();
+
+    $('input[type=checkbox]').each(function() {
+      if (this.checked) {
+
+        selectedSeats.push(this.value);
+      }
+    });
+
+
+    var busId = $('#busModal').data('bus-id');
+    var userId = $('#busModal').data('user-id');
+
+    $.ajax({
+      url: '/reservations',
+      type: 'POST',
+      data: { reservation: { bus_id: busId, user_id: userId, booked_seats: selectedSeats, reservation_date: selectedDate } },
+      headers: {
+        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function(response) {
+        // location.reload();
+        // Handle successful response from server
+      },
+      error: function(xhr) {
+        // location.reload();
+        // Handle error response from server
+      }
+    });
+  }
+</script>

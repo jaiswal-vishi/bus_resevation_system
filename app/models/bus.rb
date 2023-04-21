@@ -1,13 +1,15 @@
 class Bus < ApplicationRecord
   serialize :booked_seats, Array
   serialize :available_seats, Array
-  SOURCE = ['New Delhi', 'Lucknow', 'Kanpur', 'Haridwar', 'Varanasi']
-  DESTINATION = ['New Delhi', 'Lucknow', 'Kanpur', 'Haridwar', 'Varanasi']
+  SOURCE = ['New Delhi', 'Lucknow', 'Kanpur', 'Haridwar', 'Varanasi', 'Prayagraj', 'Indore', 'Ayodhya']
+  DESTINATION = ['New Delhi', 'Lucknow', 'Kanpur', 'Haridwar', 'Varanasi', 'Prayagraj', 'Indore', 'Ayodhya']
 
   attr_accessor :source, :destination
   enum status: [:pending, :approved, :rejected]
 
   before_save :strip_name_whitespace
+  before_save :generate_available_seats
+
   has_many :reservations
 
   validates :name, presence: true
@@ -18,6 +20,7 @@ class Bus < ApplicationRecord
   validates :status, presence: true
 
   scope :approved, -> { where(status: 'approved') }
+
 
   def self.search(source, destination, bus_name)
     if source&.present? && destination&.present? && bus_name.present? 
@@ -30,6 +33,12 @@ class Bus < ApplicationRecord
   end
 
   private
+
+  def generate_available_seats
+    seats = self.no_of_seats
+    @available_seats = Array.new(seats) { |i| i + 1 }
+    self.available_seats = @available_seats
+  end
 
   def strip_name_whitespace
     self.name = name.strip

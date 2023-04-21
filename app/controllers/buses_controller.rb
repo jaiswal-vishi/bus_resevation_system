@@ -1,19 +1,17 @@
 class BusesController < ApplicationController
   before_action :authenticate_bus_owner!, only: [:index, :new, :create, :edit, :update, :destroy]
+  before_action :authenticate_user!, only:[:show]
   before_action :set_bus, only: [:edit, :update, :destroy]
 
   def index
-    @home_show_link = true
     @buses = current_user.buses
   end
 
   def new
-    @home_show_link = true
     @bus = Bus.new
   end
 
   def create
-    debugger
     @bus = Bus.new(bus_params)
     @bus.bus_owner_id = current_user.id
 
@@ -24,21 +22,22 @@ class BusesController < ApplicationController
     end
   end
 
-  # def create
-  #   @bus = current_user.buses.build(bus_params)
-
-  #   if @bus.save
-  #     redirect_to @bus
-  #   else
-  #     render :new
-  #   end
-  # end
-
-
 
   def show
     @bus = Bus.find(params[:id])
   end
+
+  def update_show
+    @bus = Bus.find(params[:id])
+    # Get the selected date from the form
+    selected_date = params[:reservation_date]
+    bus_id = params[:id]
+
+    # Update the data for the selected date
+    @booked_seats = @bus.reservations.where(reservation_date: selected_date, bus_id: bus_id).pluck(:booked_seats).flatten.map(&:to_i)
+    @available_seats = @bus.available_seats - @booked_seats
+  end
+
 
   def edit
   end
@@ -57,12 +56,6 @@ class BusesController < ApplicationController
   end
 
   private
-
-  def authenticate_bus_owner!
-    unless current_user && current_user.bus_owner?
-      redirect_to root_path, alert: "You don't have permission to access this page"
-    end
-  end
 
   def set_bus
     @bus = current_user.buses.find(params[:id])
