@@ -25,9 +25,19 @@ class BusesController < ApplicationController
 
   def show
     @bus = Bus.find(params[:id])
-    @available_seats = @bus.available_seats
-    @booked_seats = @bus.booked_seats
   end
+
+  def update_show
+    @bus = Bus.find(params[:id])
+    # Get the selected date from the form
+    selected_date = params[:reservation_date]
+    bus_id = params[:id]
+
+    # Update the data for the selected date
+    @booked_seats = @bus.reservations.where(reservation_date: selected_date, bus_id: bus_id).pluck(:booked_seats).flatten.map(&:to_i)
+    @available_seats = @bus.available_seats - @booked_seats
+  end
+
 
   def edit
   end

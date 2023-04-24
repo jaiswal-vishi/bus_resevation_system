@@ -1,46 +1,68 @@
-<% if user_signed_in? %>
-  <div class="container pt-4 pb-4 bg-white" style="border-radius: 5px;">
-    <div class="d-flex align-items-center justify-content-between">
-      <h4>Book Your seat here...</h4>
-      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-    </div>
-    <hr>
-    <div class="row">
-      <% seats = @available_seats + @booked_seats %>
-      <% seats.sort.each do |seat| %>
-        <div class="col-md-3">
-          <div class="text-center">
-            <% selected = @booked_seats.include?(seat) %>
-            <label class="seat-label" style="color: <%= selected ? 'red' : 'inherit' %>">
-              <input type="checkbox" name="selected_seats[]" value="<%= seat %>" class="seat-checkbox"  <%= selected ? 'disabled' : '' %>>
-              <i class="fas fa-couch"></i><div class="font-text text-black-50" style="font-size: 10px;">seat no. <%= seat%></div>
-            </label>
-          </div>
-        </div>
-      <% end %>
-      <div class="form-group">
-        <label for="my-date">Booking Date:</label>
-        <input type="date" id="my-date" name="my_date" min="<%= Date.today.to_s %>" max="<%= (Date.today).to_s %>">
+<div class="modal-body">
+  <% if user_signed_in? %>
+    <div class="containe">
+      <div class="d-flex align-items-center justify-content-between">
+        <h4>Book Seats Here</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
+      <%= form_with url: "/update_bus_show", method: :post, remote: true, id: "update-bus-form" do |form| %>
+          <%= hidden_field_tag :id, @bus.id %>
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+        <label for="my-date">Booking Date:</label>
+        <input type="date" id="my-date" name="reservation_date" min="<%= Date.today.to_s %>">
+        <%#= submit_tag "Show Available Seats", class: 'btn btn-primary', id: 'filter-button' %>
+        <!-- <button type="submit" id="busModal" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#myModal" data-bus-id="<%#= @bus&.id %>" data-user-id="<%#= current_user&.id %>">Show Available Seats</button> -->
+        <button type="button" id="updateBusModalBtn" class="btn btn-secondary" data-bs-target="#update-bus-modal" onclick="updateBusModal(<%= @bus.id %>)">Book seat</button>
+      <% end %>
     </div>
-    <hr>
-    <div class="d-flex align-items-center justify-content-between">
-      <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-      <button type="button" id="busModal" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#myModal" data-bus-id="<%= @bus&.id %>" data-user-id="<%= current_user&.id %>" onclick="reservation()">Book Your Seat</button>
+  <% end %>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+</div>
+
+
+<div class="modal fade" id="update-bus-modal" tabindex="-1" aria-labelledby="update-bus-modal-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- The content of the modal will be inserted here dynamically that is update_show.html.erb of bus-->
     </div>
   </div>
-<% end %>
+</div>
 
+
+<style type="text/css">
+  .seat-label[data-booked="true"] {
+    color: red;
+  }
+</style>
 
 <script type="text/javascript">
+  function updateBusModal(busId) {
+    const selectedDate = $('input[type=date]').val();
+    $.ajax({
+      url: '/update_bus_show',
+      method: 'POST',
+      data: { id: busId, reservation_date: selectedDate },
+      headers: {
+          'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+        },
+      success: function(response) {
+        // Insert the response into the modal
+        $('#update-bus-modal .modal-content').html(response);
+        $("#update-bus-modal").modal("show");
+      }
+    });
+  }
+
   $(document).ready(function() {
     // Disable past dates in reservation date picker
     var today = new Date().toISOString().split('T')[0];
     document.getElementById("reservation_date").setAttribute("min", today);
-    document.getElementById("reservation_date").setAttribute("max", today);
   });
-  function reservation() {
 
+
+  function reservation() {
     var selectedSeats = [];
     const selectedDate = $('input[type=date]').val();
 
@@ -63,9 +85,11 @@
         'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
       },
       success: function(response) {
+        // location.reload();
         // Handle successful response from server
       },
       error: function(xhr) {
+        // location.reload();
         // Handle error response from server
       }
     });

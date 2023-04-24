@@ -6,7 +6,7 @@ class ReservationsController < ApplicationController
   end
   
   def index
-    @reservations = Reservation.includes(:bus, :user).all
+    @reservations = Reservation.includes(:bus, :user).all.order(reservation_date: :desc)
   end
 
   def create
@@ -22,7 +22,7 @@ class ReservationsController < ApplicationController
   end
 
   def show
-    @reservation = Reservation.find(params[:id])
+    @reservation = Reservation.find(params[:id]).order(reservation_date: :desc)
   end
 
   def user_reservations

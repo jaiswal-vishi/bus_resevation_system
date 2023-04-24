@@ -8,7 +8,7 @@ class Bus < ApplicationRecord
   enum status: [:pending, :approved, :rejected]
 
   before_save :strip_name_whitespace
-  before_create :generate_available_seats
+  before_save :generate_available_seats
 
   has_many :reservations
 
@@ -20,6 +20,7 @@ class Bus < ApplicationRecord
   validates :status, presence: true
 
   scope :approved, -> { where(status: 'approved') }
+
 
   def self.search(source, destination, bus_name)
     if source&.present? && destination&.present? && bus_name.present? 

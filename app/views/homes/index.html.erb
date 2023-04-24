@@ -1,8 +1,10 @@
 <div class="container mt-5">
+  <%= render "layouts/header" %>
+</div>
+<div class="container search-section">
   <%= render "layouts/search" %>
 </div>
 <div class="container">
-  <%= render "layouts/header" %>
   <div>
     <table class="table">
       <thead class="thead-dark">
@@ -28,7 +30,7 @@
             <td><%= bus.registration_no %></td>
             <td><%= bus.fare %></td>
             <td>
-              <button type="button" id="productModal<%= i %>" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#product-modal" data-bus-id="<%= bus&.id %>" data-user-id="<%#= current_user&.id %>" onclick="bookSeat(<%= i %>)">Book Your Seat</button>
+              <button type="button" id="productModal<%= i %>" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#product-modal" data-bus-id="<%= bus&.id %>" onclick="bookSeat(<%= i %>)">Book Your Seat</button>
             </td>
           </tr>
         <% end %>
@@ -39,15 +41,15 @@
 <!-- Modal -->
 <div class="modal fade" id="product-modal" tabindex="-1" role="dialog" aria-labelledby="product-modal-label" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <div class="modal-content bg-transparent border-0">
-      <!-- Content will be inserted here -->
+    <div class="modal-content">
+      <!-- content of show.html.erb from buses -->
     </div>
   </div>
 </div>
 
 <div class="modal" id="myModal">
   <div class="modal-dialog">
-    <div class="modal-content">
+     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">
           Thanks for Reservation!
@@ -63,9 +65,6 @@
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
       </div>
 
-    </div>
-  </div>
-</div>
 
 <script>
 // Handle the click event on the link
@@ -85,3 +84,5 @@ function bookSeat(index) {
   // });
 }
 </script>
+
+
