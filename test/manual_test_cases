@@ -1,0 +1,12 @@
+Here are some test cases you can consider for the bus reservation system:
+
+Test that a user cannot book a seat without logging in.
+Test that a user can log in and log out successfully.
+Test that a user can search for buses by name or route.
+Test that a user can see a list of available seats for a particular bus on a particular date.
+Test that a user can reserve one or more seats on a bus for a specific date.
+Test that a user can cancel a reservation and that the reserved seats become available for other customers.
+Test that a bus owner can add a new bus successfully.
+Test that a bus owner can view a list of their buses.
+Test that an admin can view a list of bus owners.
+Test that an admin can approve or reject a bus added by a bus owner.

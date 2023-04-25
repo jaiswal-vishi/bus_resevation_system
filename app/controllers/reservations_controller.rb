@@ -16,6 +16,7 @@ class ReservationsController < ApplicationController
         format.html # renders index.html.erb
         format.json { render json: { success: true } } # renders JSON format
       end
+      ReservationMailer.booking_confirmation(@reservation).deliver_now
     else
       render json: { success: false }
     end
@@ -27,7 +28,7 @@ class ReservationsController < ApplicationController
 
   def user_reservations
     reservations = Reservation.where(user_id: params[:id])
-    @reservations = reservations.includes(:bus, :user).all
+    @reservations = reservations.includes(:bus, :user).all.order(reservation_date: :desc)
     render 'user_reservations'
   end
 
@@ -39,6 +40,7 @@ class ReservationsController < ApplicationController
 
   def cancel_reservation
     @reservation = Reservation.find(params[:reservation_id])
+    ReservationMailer.cancel_reservation(@reservation).deliver_now
     @reservation.destroy
     redirect_to "/#{params[:id]}/reservations", notice: "Reservation cancelled successfully."
   end

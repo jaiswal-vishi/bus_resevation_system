@@ -77,3 +77,4 @@ end
 gem "devise", "~> 4.9"
 gem "rails_admin", "~> 3.1"
 gem "sassc-rails"
+gem 'letter_opener', '~> 1.8', '>= 1.8.1'

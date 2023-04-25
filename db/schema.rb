@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_18_144303) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_24_092351) do
   create_table "buses", force: :cascade do |t|
     t.string "name"
     t.string "source_route"
@@ -27,11 +27,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_18_144303) do
   end
 
   create_table "reservations", force: :cascade do |t|
-    t.integer "total_no_of_seats_booked"
     t.integer "payment_status", default: 0
     t.datetime "reservation_date"
     t.text "booked_seats", default: "--- []\n"
-    t.text "available_seats", default: "--- []\n"
     t.integer "bus_id", null: false
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
